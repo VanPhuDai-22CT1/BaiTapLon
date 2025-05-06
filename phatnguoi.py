@@ -125,7 +125,7 @@ def job():
         tra_cuu_vi_pham(plate, vehicle)
 
 if __name__ == "__main__":
-    schedule.every().day.at("17:04").do(job)
+    schedule.every().day.at("06:00").do(job)
     schedule.every().day.at("12:00").do(job)
 
     print("Hệ thống sẽ tra cứu tự động lúc 6h và 12h mỗi ngày cho ô tô và xe máy.")
