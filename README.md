@@ -29,8 +29,9 @@ cd 'c:\BaiTapLon_TuDongHoaQuyTrinh
 
 ### 2. Cài đặt Tesseract OCR
  Windows:
-Tải và cài đặt tại: https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.0
-Khi Tải về Song Chúng Ta Sẽ Được 1 thư mục ở dạng .zip:
++ Tải và cài đặt tại: https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.0
++ Khi Tải về Song Chúng Ta Sẽ Được 1 thư mục ở dạng .zip:
+
 ![image](https://github.com/user-attachments/assets/6023de7c-0bc7-49b7-8cd2-b71d3ca6f6ee)
 
 
