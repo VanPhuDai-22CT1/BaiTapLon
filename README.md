@@ -103,7 +103,7 @@ Số điện thoại liên hệ: 02623.968359
 + Thực hiện quy trình tương tự đối với xe máy.
 ---
 ### 3 Ghi Chú:
-+ OCR CAPTCHA Khồn thể chính sát được 100% nên mình cho thực 5 lần truy vấn.
++ OCR CAPTCHA Không thể chính sát được 100% nên mình cho thực 5 lần truy vấn.
 ---
 # Cấu trúc thu mục:
 ```bash
