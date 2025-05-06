@@ -79,7 +79,7 @@ Không có dữ liệu hoặc sai captcha.
 ```bash
 Thử lần 3 cho Ô tô 47F00171
 [OK] Nhận diện captcha thành công: pwd39q
-[KẾT QUẢ] Đã tìm thấy vi phạm cho Ô tô 47F00171!
+[KẾT QUẢ] Đã tìm thấy vi phạm cho Ô tô 47F00171
 Biển kiểm soát:47F-001.71
 Màu biển:Nền màu vàng, chữ và số màu đen
 Loại phương tiện:Ô tô
