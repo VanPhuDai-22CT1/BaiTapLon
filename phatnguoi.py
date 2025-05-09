@@ -12,24 +12,26 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import schedule
 
-# Cấu hình Tesseract
+
 TESSERACT_PATH = r"C:\BaiTapLon_TuDongHoaQuyTrinh\New folder\tesseract.exe"
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
 URL = "https://www.csgt.vn/tra-cuu-phuong-tien-vi-pham.html"
 WHITELIST = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
-# Danh sách phương tiện cần tra cứu: (biển số, loại xe)
+
 VEHICLES = [
     ("47F00171", "Ô tô"),
     ("98D1-60554", "Xe máy")
 ]
+
 
 def init_driver():
     chrome_options = Options()
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
 
 def enhance_image(image):
     gray = image.convert("L")
@@ -39,11 +41,11 @@ def enhance_image(image):
     resized = threshold.resize((threshold.width * 3, threshold.height * 3), Image.LANCZOS)
     return resized
 
+
 def read_captcha_from_element(driver, element):
     try:
         driver.execute_script("arguments[0].scrollIntoView();", element)
         screenshot = Image.open(BytesIO(driver.get_screenshot_as_png()))
-
         loc = element.location_once_scrolled_into_view
         size = element.size
         scale_x = screenshot.width / driver.execute_script("return window.innerWidth")
@@ -71,52 +73,61 @@ def read_captcha_from_element(driver, element):
         print(f"[ERROR] Lỗi OCR: {e}")
     return None
 
+
+def go_to_website_and_fill_form(driver, bien_so, loai_xe):
+    driver.get(URL)
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "BienKiemSoat"))).clear()
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "BienKiemSoat"))).send_keys(bien_so)
+
+    loai_xe_select = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "LoaiXe")))
+    for option in loai_xe_select.find_elements(By.TAG_NAME, "option"):
+        if option.text.strip().lower() == loai_xe.lower():
+            option.click()
+            break
+
+    return WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "imgCaptcha")))
+
+
+def submit_captcha_and_get_result(driver, captcha_code, bien_so, loai_xe):
+    captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "txt_captcha")))
+    captcha_input.clear()
+    captcha_input.send_keys(captcha_code)
+    driver.find_element(By.CLASS_NAME, "btnTraCuu").click()
+
+    try:
+        result_element = WebDriverWait(driver, 6).until(EC.presence_of_element_located((By.ID, "bodyPrint123")))
+        result = result_element.text.strip()
+        if "Biển kiểm soát" in result and "Thời gian vi phạm" in result:
+            print(f"[KẾT QUẢ] Đã tìm thấy vi phạm cho {loai_xe} {bien_so}!")
+            print(result)
+            return True
+        else:
+            print("Không có dữ liệu hoặc sai captcha.")
+    except:
+        print("Không tìm thấy kết quả hoặc hệ thống lỗi.")
+    return False
+
+
 def tra_cuu_vi_pham(bien_so, loai_xe):
     driver = init_driver()
     try:
         for attempt in range(5):
             print(f"\nThử lần {attempt + 1} cho {loai_xe} {bien_so}")
-            driver.get(URL)
-
             try:
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "BienKiemSoat"))).clear()
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "BienKiemSoat"))).send_keys(bien_so)
-
-                loai_xe_select = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "LoaiXe")))
-                for option in loai_xe_select.find_elements(By.TAG_NAME, "option"):
-                    if option.text.strip().lower() == loai_xe.lower():
-                        option.click()
-                        break
-
-                captcha_img = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "imgCaptcha")))
+                captcha_img = go_to_website_and_fill_form(driver, bien_so, loai_xe)
                 captcha_code = read_captcha_from_element(driver, captcha_img)
                 if not captcha_code:
                     print("Không đọc được captcha, thử lại...")
                     continue
 
-                captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "txt_captcha")))
-                captcha_input.clear()
-                captcha_input.send_keys(captcha_code)
-
-                driver.find_element(By.CLASS_NAME, "btnTraCuu").click()
-
-                try:
-                    result_element = WebDriverWait(driver, 6).until(EC.presence_of_element_located((By.ID, "bodyPrint123")))
-                    result = result_element.text.strip()
-                    if "Biển kiểm soát" in result and "Thời gian vi phạm" in result:
-                        print(f"[KẾT QUẢ] Đã tìm thấy vi phạm cho {loai_xe} {bien_so}!")
-                        print(result)
-                        return
-                    else:
-                        print("Không có dữ liệu hoặc sai captcha.")
-                except:
-                    print("Không tìm thấy kết quả hoặc hệ thống lỗi.")
+                if submit_captcha_and_get_result(driver, captcha_code, bien_so, loai_xe):
+                    return
             except Exception as e:
                 print(f"[ERROR] Lỗi form hoặc trang web: {e}")
-
             time.sleep(2)
     finally:
         driver.quit()
+
 
 def job():
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -127,8 +138,7 @@ def job():
 if __name__ == "__main__":
     schedule.every().day.at("06:00").do(job)
     schedule.every().day.at("12:00").do(job)
-
-    print("Hệ thống sẽ tra cứu tự động lúc 6h và 12h mỗi ngày cho ô tô và xe máy.")
+    print("Hệ thống sẽ tra cứu tự động lúc 06:00 và 12:00 mỗi ngày cho ô tô và xe máy.")
     while True:
         schedule.run_pending()
         time.sleep(1)
