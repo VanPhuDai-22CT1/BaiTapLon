@@ -114,13 +114,13 @@ Số điện thoại liên hệ: 02623.968359
 └── README.md            
 ```
 # === MÔ TẢ CÁC HÀM ===
-init_driver(): Khởi tạo trình duyệt Chrome.
-enhance_image(image): Nâng chất lượng ảnh captcha để dễ OCR.
-read_captcha_from_element(driver, element): Chụp ảnh captcha và đọc nội dung bằng OCR.
-fill_form(driver, bien_so, loai_xe): Nhập biển số và chọn loại xe.
-submit_form(driver, captcha_code): Nhập mã captcha và bấm nút tra cứu.
-check_result(driver): Kiểm tra và lấy kết quả tra cứu vi phạm nếu có.
-tra_cuu_vi_pham(bien_so, loai_xe): Gọi các hàm con ở trên để thực hiện toàn bộ quy trình tra cứu.
-job(): Chạy tra cứu định kỳ cho danh sách phương tiện.
++ init_driver(): Khởi tạo trình duyệt Chrome.
++ enhance_image(image): Nâng chất lượng ảnh captcha để dễ OCR.
++ read_captcha_from_element(driver, element): Chụp ảnh captcha và đọc nội dung bằng OCR.
++ fill_form(driver, bien_so, loai_xe): Nhập biển số và chọn loại xe.
++ submit_form(driver, captcha_code): Nhập mã captcha và bấm nút tra cứu.
++ check_result(driver): Kiểm tra và lấy kết quả tra cứu vi phạm nếu có.
++ tra_cuu_vi_pham(bien_so, loai_xe): Gọi các hàm con ở trên để thực hiện toàn bộ quy trình tra cứu.
++ job(): Chạy tra cứu định kỳ cho danh sách phương tiện.
 
 
